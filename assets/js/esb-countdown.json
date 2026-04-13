@@ -1,0 +1,40 @@
+(function(){
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function render(el){
+    var target = el.getAttribute('data-target');
+    if(!target) return;
+    var targetMs = Date.parse(target);
+    if(Number.isNaN(targetMs)) return;
+
+    function tick(){
+      var diff = targetMs - Date.now();
+      if(diff <= 0){
+        el.innerHTML = '<span class="qph-esb-countdown__done">Evento iniciado</span>';
+        return;
+      }
+      var s = Math.floor(diff/1000);
+      var d = Math.floor(s/86400); s%=86400;
+      var h = Math.floor(s/3600); s%=3600;
+      var m = Math.floor(s/60); s%=60;
+      el.innerHTML = ''+
+        '<span class="qph-esb-countdown__part"><strong>'+d+'</strong>d</span> '+
+        '<span class="qph-esb-countdown__part"><strong>'+pad(h)+'</strong>h</span> '+
+        '<span class="qph-esb-countdown__part"><strong>'+pad(m)+'</strong>m</span> '+
+        '<span class="qph-esb-countdown__part"><strong>'+pad(s)+'</strong>s</span>';
+      window.setTimeout(tick,1000);
+    }
+
+    tick();
+  }
+
+  function init(){
+    var nodes = document.querySelectorAll('.qph-esb-countdown[data-target]');
+    nodes.forEach(render);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
